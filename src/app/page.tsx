@@ -1,13 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 
-type TaskKey =
-  | "emails"
-  | "leadmagnet"
-  | "offers"
-  | "hooks"
-  | "names"
-  | "custom";
+type TaskKey = "emails" | "leadmagnet" | "offers" | "hooks" | "names" | "custom";
 
 const TASK_TEXT: Record<TaskKey, string> = {
   emails:
@@ -39,27 +33,18 @@ export default function Home() {
     return TASK_TEXT[task];
   }, [task, customTask]);
 
-  // [ADDED] how many items to generate (default 10)
-  const [count, setCount] = useState(10);
-
   async function generate() {
     try {
       setLoading(true);
       setError("");
       setOut("");
 
-      // [ADDED] Add a “knobs” block the model can read
-      const knobs = `Count: ${count}`;
-
-      // [CHANGED] include `knobs` when composing what we send
-      const composed = [brief.trim(), taskLine, knobs]
-        .filter(Boolean)
-        .join("\n\n");
+      const composed = [brief.trim(), taskLine].filter(Boolean).join("\n\n");
 
       const resp = await fetch("/api/idea", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ brief: composed }), // the backend reads this single brief
+        body: JSON.stringify({ brief: composed, mode: task }),
       });
 
       if (!resp.ok) {
@@ -106,24 +91,10 @@ export default function Home() {
         }
         value={brief}
         onChange={(e) => setBrief(e.target.value)}
-        style={{
-          width: "100%",
-          height: 160,
-          padding: 12,
-          border: "1px solid #ddd",
-          borderRadius: 6,
-        }}
+        style={{ width: "100%", height: 160, padding: 12, border: "1px solid #ddd", borderRadius: 6 }}
       />
 
-      <div
-        style={{
-          display: "flex",
-          gap: 12,
-          alignItems: "center",
-          marginTop: 12,
-          flexWrap: "wrap",
-        }}
-      >
+      <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 12, flexWrap: "wrap" }}>
         <div>
           <label style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>
             Task
@@ -131,12 +102,7 @@ export default function Home() {
           <select
             value={task}
             onChange={(e) => setTask(e.target.value as TaskKey)}
-            style={{
-              padding: "10px 12px",
-              borderRadius: 6,
-              border: "1px solid #ddd",
-              minWidth: 260,
-            }}
+            style={{ padding: "10px 12px", borderRadius: 6, border: "1px solid #ddd", minWidth: 260 }}
           >
             <option value="emails">Email ideas</option>
             <option value="leadmagnet">Lead magnet concepts</option>
@@ -147,39 +113,10 @@ export default function Home() {
           </select>
         </div>
 
-        {/* [ADDED] Count control */}
-        <div>
-          <label style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>
-            Count
-          </label>
-          <input
-            type="number"
-            min={1}
-            max={30}
-            value={count}
-            onChange={(e) => setCount(Number(e.target.value))}
-            style={{
-              width: 90,
-              padding: "10px 12px",
-              borderRadius: 6,
-              border: "1px solid #ddd",
-            }}
-          />
-        </div>
-
         <button
           onClick={generate}
           disabled={loading || !brief.trim()}
-          style={{
-            padding: "10px 16px",
-            borderRadius: 8,
-            border: "none",
-            background: "#000",
-            color: "#fff",
-            opacity: loading || !brief.trim() ? 0.6 : 1,
-            height: 44,
-            alignSelf: "end",
-          }}
+          style={{ padding: "10px 16px", borderRadius: 8, border: "none", background: "#000", color: "#fff", opacity: loading || !brief.trim() ? 0.6 : 1, height: 44, alignSelf: "end" }}
         >
           {loading ? "Generating…" : "Generate"}
         </button>
@@ -195,21 +132,10 @@ export default function Home() {
 
       {out && (
         <>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 12,
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
             <button
               onClick={copyAll}
-              style={{
-                padding: "8px 12px",
-                borderRadius: 6,
-                border: "1px solid #ddd",
-                background: "#fff",
-              }}
+              style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ddd", background: "#fff" }}
               title="Copy all ideas"
             >
               Copy to Clipboard

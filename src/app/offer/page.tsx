@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function AvatarProfiler() {
+export default function OfferBuilder() {
   const [brief, setBrief] = useState("");
   const [out, setOut] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ export default function AvatarProfiler() {
       const resp = await fetch("/api/idea", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ brief: brief.trim(), mode: "avatar" }),
+        body: JSON.stringify({ brief: brief.trim(), mode: "offer" }),
       });
 
       if (!resp.ok) {
@@ -45,26 +45,26 @@ export default function AvatarProfiler() {
   return (
     <main style={{ maxWidth: 820, margin: "0 auto", padding: 24 }}>
       <h1 style={{ fontSize: 24, fontWeight: 600, marginBottom: 12 }}>
-        Avatar Profiler
+        Offer Builder
       </h1>
 
       <p style={{ color: "#555", marginBottom: 12 }}>
-        Describe your perfect client. If key details are missing, I’ll ask up to
-        3 questions, then stop.
+        Outline your offer. If essentials are missing, I’ll ask up to 3 questions, then stop.
       </p>
 
       <textarea
-        placeholder={`NICHE: (e.g., Sea kayakers 50+ who value safety & ease)
-SITUATIONS: (moments that trigger the problem)
-PAINS (5): (their words)
-DESIRES (5): (their words)
-OBJECTIONS / FALSE BELIEFS:
-PHRASES THEY SAY: (quotes)`}
+        placeholder={`PROMISE: (clear, measurable)
+DELIVERABLES: (format, cadence)
+MECHANISM: (why this works; steps)
+FAST FIRST WIN: (24–72h)
+PROOF ASSETS: (demos/testimonials)
+RISK REVERSAL: (plain-English)
+SCOPE GUARDRAILS: (what’s in/out)`}
         value={brief}
         onChange={(e) => setBrief(e.target.value)}
         style={{
           width: "100%",
-          height: 180,
+          height: 200,
           padding: 12,
           border: "1px solid #ddd",
           borderRadius: 6,
@@ -84,7 +84,7 @@ PHRASES THEY SAY: (quotes)`}
             opacity: loading || !brief.trim() ? 0.6 : 1,
           }}
         >
-          {loading ? "Profiling…" : "Generate Avatar Snapshot"}
+          {loading ? "Building…" : "Generate Offer Blueprint"}
         </button>
       </div>
 
@@ -92,22 +92,10 @@ PHRASES THEY SAY: (quotes)`}
 
       {out && (
         <>
-          {/* Copy toolbar */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 12,
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
             <button
               onClick={copyAll}
-              style={{
-                padding: "8px 12px",
-                borderRadius: 6,
-                border: "1px solid #ddd",
-                background: "#fff",
-              }}
+              style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ddd", background: "#fff" }}
               title="Copy all"
             >
               Copy to Clipboard
