@@ -1,3 +1,4 @@
+// src/app/api/idea/route.ts
 export const runtime = "edge"; // fast startup later on Vercel
 
 // Quick browser test at /api/idea
@@ -5,77 +6,27 @@ export async function GET() {
   return new Response("Idea API is alive");
 }
 
-/* =======================
-   Prompt library (backend)
-   ======================= */
+// === Prompt imports (relative paths from this file) ===
+import { BASE_RULES } from "../../../lib/prompts/base";
+import { AVATAR_PROMPT } from "../../../lib/prompts/avatar";
+import { OFFER_PROMPT } from "../../../lib/prompts/offer";
+import { EMAILS_PROMPT } from "../../../lib/prompts/emails";
+import { LEADMAGNET_PROMPT } from "../../../lib/prompts/leadmagnet";
+import { OFFERS_ENHANCE_PROMPT } from "../../../lib/prompts/offersEnhance";
+import { HOOKS_PROMPT } from "../../../lib/prompts/hooks";
+import { NAMES_PROMPT } from "../../../lib/prompts/names";
+import { CUSTOM_PROMPT } from "../../../lib/prompts/custom";
 
-// Shared rules used by every mode
-const BASE_RULES = `
-You are a calm, commercially-savvy creative strategist for micro-niche businesses.
-Always prioritize a trailing line that starts with "TASK:" if present.
-If the user message includes "Count: N", aim to return about N items.
-Be specific, non-hypey, and tie ideas to believable mechanisms and quick demonstrations.
-`;
-
-// Mode-specific instructions (tight, task-optimized)
+// Map modes to prompts
 const MODE_PROMPTS: Record<string, string> = {
-  emails: `
-Return 10 email ideas.
-Each: **Subject line** + 2–3 sentence outline + **CTA**.
-Bias toward safety, clarity, proof, and tiny demonstrations people can do quickly.
-`,
-  leadmagnet: `
-Return 5 lead magnet concepts.
-Each: **Title & Promise**, **Who it's for**, **What's inside** (5–7 bullets),
-**Delivery & 3-email follow-up** (one line each).
-`,
-  offers: `
-Return 3 offer enhancements.
-Each: **Positioning + mechanism**, **3–5 proof assets**, **Plain-English guarantee**, **Fast-path first win**.
-`,
-  hooks: `
-Return 10 short-video hooks.
-Each: **Hook line** + **One concrete demo to film** + **Outcome it proves**.
-`,
-  names: `
-Return 12 course/program names.
-Each: **Name** + **One-line rationale**. Avoid hype; be clear, memorable, and on-brand.
-`,
-  // NEW: avatar mode used by /avatar page
-  avatar: `
-Interview first. If the target audience is vague, ask up to 3 pointed questions; then STOP.
-When clear, return:
-
-## AVATAR SNAPSHOT
-- **Who** (micro-niche + stage)
-- **Situations/Moments** that trigger the problem
-- **Top 5 Pains** (their words)
-- **Top 5 Desired Outcomes** (their words)
-- **Objections & False Beliefs**
-- **Language Bank**: 10 exact phrases they would say (quotes)
-
-Rules: micro-niche specificity; prefer quotes; no hype.
-If "Count: N" is present, aim for N phrases in the Language Bank.
-`,
-  // OPTIONAL: if you add /offer later, reuse this key from the plan
-  offer: `
-If essentials are missing (promise, deliverables, time frame, constraints), ask up to 3 questions; STOP.
-Otherwise return:
-
-## OFFER BLUEPRINT
-- **Core Promise** (clear, measurable)
-- **Mechanism** (why this works; steps)
-- **Delivery** (format, cadence, time requirements)
-- **Fast First Win** (24–72h)
-- **Proof Assets to Show** (3–5 demos/testimonials)
-- **Risk Reversal** (plain-English)
-- **Scope Guardrails** (what’s in / out)
-
-Tone: calm, precise, ethical. Short sentences; avoid unprovable claims.
-`,
-  custom: `
-Use the trailing TASK exactly as written. Prefer concise, structured output.
-`,
+  emails: EMAILS_PROMPT,
+  leadmagnet: LEADMAGNET_PROMPT,
+  offers: OFFERS_ENHANCE_PROMPT,
+  hooks: HOOKS_PROMPT,
+  names: NAMES_PROMPT,
+  avatar: AVATAR_PROMPT,
+  offer: OFFER_PROMPT,
+  custom: CUSTOM_PROMPT,
 };
 
 export async function POST(req: Request) {
